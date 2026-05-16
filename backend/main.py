@@ -1,44 +1,35 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from datetime import date
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
-app = FastAPI()
+posts = [
+    {
+        "id":1,
+        "title":"FastAPI is Awesome",
+        "content": "FastAPI is a python backend framework that makes it very easy for you to deploy your app.",
+        "author":"Dev",
+        "date_posted": "May 16 2026" 
+    },
+    {
+        "id": 2,
+        "title":"I love popcorns",
+        "content": "Popcorns are my favourite snack and I love to have them while watching a show or a movie.",
+        "author":"Cloud",
+        "date_posted": "May 16 2026"
+    }
+]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"], 
-    allow_headers=["*"],
-)
+app = FastAPI() 
 
-class Author(BaseModel):
-    id : int 
-    name: str
-    joined: date
-    email: str
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-class Blogs(BaseModel):
-    id: str = "000"
-    title: str
-    content: str
-    author: Author
+templates = Jinja2Templates(directory="templates")
 
-a = Author(id=1,name="Dev",joined=date(2001,12,4),email="SomeoneSomeone@gmail.com")
-b = Blogs(id="001",title="Water", content="Water is very essential for our lives.", author=a )
+@app.get("/")
+@app.get("/posts")
+def root(request: Request):
+    return templates.TemplateResponse(request, "home.html", {"posts":posts, "title": "Home"})
 
-blog_list = []
-
-
-@app.get('/')
-async def root():
-    return {"message": "API Working"}
-
-@app.get('/blogs')
-async def show_blogs():
-    return blog_list
-
-@app.post('/write_blog')
-async def write_blog(blog: Blogs):
-    blog_list.append(blog.model_dump())
-    return blog_list
+@app.post("/api/posts")
+def posts_api():
+    return posts
