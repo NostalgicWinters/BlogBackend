@@ -20,6 +20,13 @@ posts = [
         "content": "Popcorns are my favourite snack and I love to have them while watching a show or a movie.",
         "author":"Cloud",
         "date_posted": "May 16 2026"
+    },
+    {
+        "id": 3,
+        "title": "Python is a very versatile language.",
+        "content": "We can do automation, machine learning, finance and many others using python.",
+        "author":"Rain",
+        "date_posted": "May 17 2026"
     }
 ]
 
